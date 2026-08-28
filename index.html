@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Departing Soon — The Honeymoon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================================
+     CONFIG — edit these to personalize the page
+     ============================================ */
+  :root {
+    --night-deep:  #050814;
+    --night:       #0B1030;
+    --board:       #16182B;
+    --board-edge:  #232544;
+    --brass:       #C9A15C;
+    --cream:       #F3ECDD;
+    --rust:        #B0552F;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--night-deep);
+    color: var(--cream);
+    font-family: 'Work Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ---------- Sky ---------- */
+  .sky {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(201,161,92,0.10), transparent 45%),
+      radial-gradient(ellipse at 80% 110%, rgba(176,85,47,0.08), transparent 45%),
+      linear-gradient(180deg, var(--night-deep) 0%, var(--night) 55%, #0d1338 100%);
+    z-index: -2;
+  }
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, #fff, transparent),
+      radial-gradient(1px 1px at 80% 15%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 60% 8%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 45% 40%, #fff, transparent),
+      radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 70% 90%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 95% 35%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1.5px 1.5px at 25% 30%, #fff, transparent);
+    background-size: 100% 100%;
+    opacity: 0.9;
+    animation: twinkle 6s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
+
+  .wrap {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6vh 5vw 8vh;
+  }
+
+  /* ---------- Boarding pass eyebrow ---------- */
+  .pass {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass);
+    border-top: 1px solid rgba(201,161,92,0.35);
+    border-bottom: 1px solid rgba(201,161,92,0.35);
+    padding: 10px 0;
+    margin-bottom: 3.5rem;
+    width: 100%;
+    max-width: 620px;
+    justify-content: space-between;
+  }
+  .pass .dot { color: rgba(243,236,221,0.4); }
+
+  /* ---------- Headline ---------- */
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    line-height: 1.05;
+    text-align: center;
+    margin: 0 0 0.6rem;
+    max-width: 16ch;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--brass);
+  }
+  .route {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: rgba(243,236,221,0.65);
+    margin-bottom: 4.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .route .line {
+    width: 60px;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--brass), var(--brass) 4px, transparent 4px, transparent 8px);
+    position: relative;
+  }
+  .route .line::after {
+    content: '✈';
+    position: absolute;
+    right: -4px;
+    top: -9px;
+    font-size: 0.9rem;
+    color: var(--brass);
+  }
+
+  /* ---------- Split-flap board ---------- */
+  .board {
+    display: flex;
+    gap: clamp(10px, 2.5vw, 22px);
+    margin-bottom: 1.4rem;
+  }
+  .unit { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .digits { display: flex; gap: 6px; }
+
+  .flip {
+    position: relative;
+    width: clamp(38px, 8vw, 58px);
+    height: clamp(56px, 11.5vw, 82px);
+    perspective: 300px;
+  }
+  .flip .face {
+    position: absolute;
+    inset: 0;
+    background: var(--board);
+    border: 1px solid var(--board-edge);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4.2vw, 2.4rem);
+    color: var(--cream);
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.35);
+  }
+  .flip .face::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: rgba(0,0,0,0.55);
+    transform: translateY(-0.5px);
+  }
+  .flip .face.slide-out {
+    animation: slideOut 0.5s ease-in forwards;
+  }
+  .flip .face.slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+  }
+  @keyframes slideOut {
+    0%   { transform: translateY(0); filter: blur(0); opacity: 1; }
+    100% { transform: translateY(-60%); filter: blur(2px); opacity: 0; }
+  }
+  @keyframes slideIn {
+    0%   { transform: translateY(60%); filter: blur(2px); opacity: 0; }
+    100% { transform: translateY(0); filter: blur(0); opacity: 1; }
+  }
+
+  .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(243,236,221,0.55);
+  }
+
+  .sep {
+    align-self: flex-start;
+    margin-top: clamp(16px, 4vw, 26px);
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: var(--board-edge);
+  }
+
+  /* ---------- Details row (airport board style) ---------- */
+  .details {
+    margin-top: 4rem;
+    width: 100%;
+    max-width: 640px;
+    border-top: 1px solid rgba(201,161,92,0.25);
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(201,161,92,0.15);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+  }
+  .detail-row .k { color: rgba(243,236,221,0.5); text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.66rem; }
+  .detail-row .v { color: var(--cream); }
+  .detail-row .v.brass { color: var(--brass); }
+
+  footer {
+    margin-top: 4rem;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: rgba(243,236,221,0.6);
+    text-align: center;
+  }
+
+  .arrived {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--brass);
+    text-align: center;
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="sky"></div>
+  <div class="stars"></div>
+
+  <div class="wrap">
+
+    <div class="pass">
+      <span>Boarding Pass</span>
+      <span class="dot">•</span>
+      <span>ANC → EUROPE</span>
+      <span class="dot">•</span>
+      <span>Class: Honeymoon</span>
+    </div>
+
+    <h1>The countdown to <em>our</em> honeymoon</h1>
+    <div class="route">
+      <span>ANC 01:00 AKDT</span>
+      <span class="line"></span>
+      <span>SEP 21</span>
+    </div>
+
+    <div id="board-live">
+      <div class="board" id="board"></div>
+    </div>
+
+    <div id="arrived-message" class="arrived" style="display:none;">Wheels up — enjoy Europe. ✈</div>
+
+    <div class="details">
+      <div class="detail-row"><span class="k">Departs</span><span class="v brass">Sep 21, 2026 · 1:00 AM AKDT</span></div>
+      <div class="detail-row"><span class="k">From</span><span class="v">Anchorage, Alaska</span></div>
+      <div class="detail-row"><span class="k">Destination</span><span class="v">Europe</span></div>
+      <div class="detail-row"><span class="k">Status</span><span class="v" id="status-text">Counting down</span></div>
+    </div>
+
+    <footer>Can't wait to see it with you.</footer>
+
+  </div>
+
+<script>
+  // ============================================
+  // CONFIG — set your exact departure moment here
+  // ============================================
+  // 1:00 AM Alaska Daylight Time on Sept 21, 2026 = UTC-8 offset
+  const DEPARTURE = new Date("2026-09-21T01:00:00-08:00");
+
+  const board = document.getElementById('board');
+  const units = [
+    { key: 'days',    label: 'Days'    },
+    { key: 'hours',   label: 'Hours'   },
+    { key: 'minutes', label: 'Mins'    },
+    { key: 'seconds', label: 'Secs'    }
+  ];
+
+  let prevValues = {};
+
+  // Build initial DOM structure
+  units.forEach((u, i) => {
+    const unitEl = document.createElement('div');
+    unitEl.className = 'unit';
+
+    const digitsEl = document.createElement('div');
+    digitsEl.className = 'digits';
+    digitsEl.id = `digits-${u.key}`;
+
+    const labelEl = document.createElement('div');
+    labelEl.className = 'label';
+    labelEl.textContent = u.label;
+
+    unitEl.appendChild(digitsEl);
+    unitEl.appendChild(labelEl);
+    board.appendChild(unitEl);
+
+    if (i < units.length - 1) {
+      const sep = document.createElement('div');
+      sep.className = 'sep';
+      sep.textContent = ':';
+      board.appendChild(sep);
+    }
+  });
+
+  function renderDigits(key, str) {
+    const container = document.getElementById(`digits-${key}`);
+    const prevStr = prevValues[key];
+    container.innerHTML = '';
+    str.split('').forEach((ch, idx) => {
+      const flip = document.createElement('div');
+      flip.className = 'flip';
+      const face = document.createElement('div');
+      face.className = 'face';
+      face.textContent = ch;
+
+      if (prevStr && prevStr[idx] !== undefined && prevStr[idx] !== ch) {
+        face.classList.add('slide-in');
+      }
+
+      flip.appendChild(face);
+      container.appendChild(flip);
+    });
+    prevValues[key] = str;
+  }
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const now = new Date();
+    const diff = DEPARTURE - now;
+
+    if (diff <= 0) {
+      document.getElementById('board-live').style.display = 'none';
+      document.getElementById('arrived-message').style.display = 'block';
+      document.getElementById('status-text').textContent = 'In flight';
+      clearInterval(timer);
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    renderDigits('days', pad(days).length < 2 ? pad(days) : String(days));
+    renderDigits('hours', pad(hours));
+    renderDigits('minutes', pad(minutes));
+    renderDigits('seconds', pad(seconds));
+  }
+
+  tick();
+  const timer = setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
